@@ -1,22 +1,68 @@
 /*! tailwindcss v4.1.5 | MIT License | https://tailwindcss.com */
 @layer properties;
+.visible {
+  visibility: visible;
+}
+.absolute {
+  position: absolute;
+}
+.fixed {
+  position: fixed;
+}
 .relative {
   position: relative;
+}
+.container {
+  width: 100%;
+}
+.contents {
+  display: contents;
 }
 .flex {
   display: flex;
 }
+.hidden {
+  display: none;
+}
 .h-screen {
   height: 100vh;
 }
+.w-full {
+  width: 100%;
+}
 .transform {
   transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.flex-col {
+  flex-direction: column;
 }
 .items-center {
   align-items: center;
 }
 .justify-center {
   justify-content: center;
+}
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
+.border-2 {
+  border-style: var(--tw-border-style);
+  border-width: 2px;
+}
+.border-dashed {
+  --tw-border-style: dashed;
+  border-style: dashed;
+}
+.text-left {
+  text-align: left;
 }
 @property --tw-rotate-x {
   syntax: "*";
@@ -38,6 +84,11 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
@@ -46,6 +97,7 @@
       --tw-rotate-z: initial;
       --tw-skew-x: initial;
       --tw-skew-y: initial;
+      --tw-border-style: solid;
     }
   }
 }
