@@ -2,6 +2,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 // Expose protected methods that allow the renderer process to use
 // specific Node.js APIs safely through the contextBridge
@@ -14,17 +15,38 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Receive files and save them to temp directory
   receiveFiles: (files) => {
     const results = [];
+    const tempDir = path.join(os.tmpdir(), 'fileCompressor');
+    
+    // Ensure temp directory exists
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir, { recursive: true });
+    }
+    
     // Process each file received from renderer
     files.forEach(file => {
       try {
-        // Log file information for debugging
-        console.log('File received:', file.name, file.path);
-        results.push({
-          name: file.name,
-          size: file.size,
-          path: file.path,
-          status: 'received'
-        });
+        // Convert File object to Buffer (this would come from a DataTransfer in production)
+        // In real browser context, we'd need to use FileReader API or similar
+        // Here we're assuming that file.path is available from Electron's file dialog
+        if (file.path) {
+          // If file has a path (local file), we can use it directly
+          const fileBuffer = fs.readFileSync(file.path);
+          const tempFilePath = path.join(tempDir, file.name);
+          
+          // Save to temp directory
+          fs.writeFileSync(tempFilePath, fileBuffer);
+          
+          // Log file information
+          console.log('File received and saved:', file.name, tempFilePath);
+          
+          results.push({
+            name: file.name,
+            size: file.size,
+            originalPath: file.path,
+            tempPath: tempFilePath,
+            status: 'received'
+          });
+        }
       } catch (error) {
         console.error('Error processing file:', error);
         results.push({
@@ -37,25 +59,23 @@ contextBridge.exposeInMainWorld('electronAPI', {
     return results;
   },
   
-  // Compress files (placeholder for actual compression logic)
+  // Compress files with actual compression logic
   compressFiles: async (filePaths) => {
-    // This would be replaced with actual compression logic
     console.log('Compressing files:', filePaths);
     
-    return new Promise(resolve => {
-      // Simulate compression process
-      setTimeout(() => {
-        resolve({
-          success: true,
-          compressedFiles: filePaths.map(filePath => {
-            return {
-              originalPath: filePath,
-              compressedPath: filePath + '.compressed',
-              compressionRatio: '50%' // Placeholder value
-            };
-          })
-        });
-      }, 1500);
+    return new Promise((resolve, reject) => {
+      // Send to main process where the actual compression will happen
+      // We're using IPC here since compression is CPU-intensive
+      ipcRenderer.send('compression-request', filePaths);
+      
+      // Listen for the response
+      ipcRenderer.once('compression-complete', (event, result) => {
+        resolve(result);
+      });
+      
+      ipcRenderer.once('compression-error', (event, error) => {
+        reject(error);
+      });
     });
   },
   

@@ -1,6 +1,14 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-// File upload handling
 document.addEventListener('DOMContentLoaded', () => {
     const dropzoneInput = document.getElementById('dropzone-file');
     // Add null check for dropzoneInput
@@ -107,20 +115,90 @@ document.addEventListener('DOMContentLoaded', () => {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
-    // Handle compress button click
-    compressButton.addEventListener('click', () => {
+    // Handle compress button click with Electron API integration
+    compressButton.addEventListener('click', () => __awaiter(void 0, void 0, void 0, function* () {
         if (selectedFiles.length > 0) {
-            console.log('Compressing files:', selectedFiles);
-            // Here you would implement your actual compression logic
-            // For now we're just showing that the button responds
-            compressButton.textContent = 'Compressing...';
-            compressButton.disabled = true;
-            // Simulate processing
-            setTimeout(() => {
-                compressButton.textContent = 'Compress';
-                compressButton.disabled = false;
-                alert('Files processed! (This is just a UI demo)');
-            }, 2000);
+            try {
+                // Update UI to show processing state
+                compressButton.textContent = 'Compressing...';
+                compressButton.disabled = true;
+                // First, send files to main process to ensure they're accessible
+                const processedFiles = window.electronAPI.receiveFiles(selectedFiles);
+                console.log('Processed files:', processedFiles);
+                // Extract proper file paths for compression
+                // Use the tempPath from the receiveFiles result, fallback to originalPath or just the name
+                const filePaths = processedFiles.map(file => file.tempPath || file.originalPath || file.path || file.name);
+                // Notify main process about compression request
+                window.electronAPI.send('compression-request', filePaths);
+                // Use the exposed API to compress files
+                const result = yield window.electronAPI.compressFiles(filePaths);
+                // Handle compression result
+                if (result.success) {
+                    // Update UI to show success
+                    updateResultsUI(result.compressedFiles);
+                    compressButton.textContent = 'Compress';
+                    compressButton.disabled = false;
+                }
+                else {
+                    throw new Error('Compression failed');
+                }
+            }
+            catch (error) {
+                console.error('Error during compression:', error);
+                compressButton.textContent = 'Compression Failed';
+                setTimeout(() => {
+                    compressButton.textContent = 'Compress';
+                    compressButton.disabled = false;
+                }, 3000);
+            }
         }
+    }));
+    // Function to update UI with compression results
+    function updateResultsUI(compressedFiles) {
+        var _a;
+        // Create a results container if it doesn't exist
+        let resultsContainer = document.getElementById('compression-results');
+        if (!resultsContainer) {
+            resultsContainer = document.createElement('div');
+            resultsContainer.id = 'compression-results';
+            resultsContainer.className = 'mt-8 w-full bg-gray-800 p-4 rounded-lg';
+            (_a = document.querySelector('.flex.flex-col.items-center')) === null || _a === void 0 ? void 0 : _a.appendChild(resultsContainer);
+        }
+        // Clear previous results
+        resultsContainer.innerHTML = `
+      <h3 class="text-lg font-bold mb-4">Compression Results</h3>
+      <div class="space-y-2"></div>
+    `;
+        const listContainer = resultsContainer.querySelector('.space-y-2');
+        if (listContainer) {
+            compressedFiles.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'bg-gray-700 p-3 rounded flex justify-between items-center';
+                fileItem.innerHTML = `
+          <div class="truncate flex-1">
+            <span class="font-medium">${path.basename(file.originalPath)}</span>
+          </div>
+          <div class="text-green-400 ml-4 font-mono">
+            ${file.compressionRatio} smaller
+          </div>
+        `;
+                listContainer.appendChild(fileItem);
+            });
+        }
+    }
+    // Listen for compression events from main process
+    window.electronAPI.on('compression-complete', (result) => {
+        console.log('Compression completed:', result);
+        // Additional UI updates can be done here
+    });
+    window.electronAPI.on('compression-error', (error) => {
+        console.error('Compression error from main process:', error);
+        // Error handling UI updates can be done here
     });
 });
+// Path module for handling file paths
+const path = {
+    basename: (filePath) => {
+        return filePath.split(/[\\/]/).pop() || filePath;
+    }
+};

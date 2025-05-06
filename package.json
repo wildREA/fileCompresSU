@@ -18,5 +18,10 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.5",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "imagemin": "^9.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-pngquant": "^10.0.0"
   }
 }

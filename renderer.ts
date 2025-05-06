@@ -150,11 +150,18 @@ document.addEventListener('DOMContentLoaded', () => {
         compressButton.textContent = 'Compressing...';
         compressButton.disabled = true;
         
-        // Notify main process about files via our preload bridge
-        window.electronAPI.send('file-upload', selectedFiles);
+        // First, send files to main process to ensure they're accessible
+        const processedFiles = window.electronAPI.receiveFiles(selectedFiles);
+        console.log('Processed files:', processedFiles);
         
-        // Process the selected files using the Electron bridge
-        const filePaths = selectedFiles.map(file => file.name);
+        // Extract proper file paths for compression
+        // Use the tempPath from the receiveFiles result, fallback to originalPath or just the name
+        const filePaths = processedFiles.map(file => 
+          file.tempPath || file.originalPath || file.path || file.name
+        );
+        
+        // Notify main process about compression request
+        window.electronAPI.send('compression-request', filePaths);
         
         // Use the exposed API to compress files
         const result = await window.electronAPI.compressFiles(filePaths);
