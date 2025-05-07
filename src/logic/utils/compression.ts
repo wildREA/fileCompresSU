@@ -3,4 +3,4 @@
 
 // This file contains utility functions for file compression and download handling.
 // renderer.ts will use these functions to manage file compression and downloads.
-const { ipcRenderer } = 'electron';
+const { ipcRenderer } = require('electron');
