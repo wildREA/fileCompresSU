@@ -8,10 +8,19 @@ add(a, b);
 import { ipcRenderer } from "electron";
 const dropzone = document.getElementById("dropzone-file") as HTMLDivElement;
 const downloads = document.getElementById("download-section") as HTMLDivElement;
-const compressed = document.getElementById(
-  "compression-results"
-) as HTMLDivElement;
+const compressed = document.getElementById("compression-results") as HTMLDivElement;
 
 ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
   dropzone.addEventListener(eventName, (e) => e.preventDefault());
 });
+
+dropzone.addEventListener("dragover", () => {
+  dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave", () => {
+  dropzone.classList.remove("dragover");
+});
+
+// Handle drop event
+dropzone.addEventListener("drop", (e) => {});
