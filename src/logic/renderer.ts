@@ -1,9 +1,9 @@
 // Importing the compression utility functions
-import {
+const {
   setupDropzoneHandlers,
   setupCompressionListeners,
   createDownloadElements,
-} from "./utils/compression";
+} = require("./utils/compression");
 
 // Get DOM elements
 const dropzone = document.getElementById("dropzone-file") as HTMLDivElement;
@@ -19,7 +19,7 @@ if (!dropzone || !downloads || !compressed) {
 
   // Set up compression listeners
   setupCompressionListeners({
-    onCompressionComplete: (compressedPaths) => {
+    onCompressionComplete: (compressedPaths: string[]) => {
       // Unhide the download section
       downloads.classList.remove("hidden");
 
@@ -27,12 +27,12 @@ if (!dropzone || !downloads || !compressed) {
       compressed.innerHTML = "";
 
       // Add download links for each compressed file
-      const downloadElements = createDownloadElements(compressedPaths);
+      const downloadElements: HTMLElement[] = createDownloadElements(compressedPaths);
       downloadElements.forEach((element) => {
         compressed.appendChild(element);
       });
     },
-    onCompressionError: (error) => {
+    onCompressionError: (error: unknown) => {
       console.error("Compression error:", error);
       // Optional: Show an error message in the UI
       alert("Error compressing files. Please try again.");
