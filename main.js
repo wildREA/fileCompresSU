@@ -1,13 +1,19 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const { createGzip } = require('zlib');
 const { createReadStream, createWriteStream } = require('fs');
 const { basename, join } = require('path');
 
 // Main process
 function createWindow() {
+// 1) Remove the entire application menu
+Menu.setApplicationMenu(null);
+
+  // 2) Create a new BrowserWindow instance
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    title: 'File CompresSU',
+    icon: path.join(__dirname, 'src', 'images', 'appIcon.png'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,  // This should be true for security best practices (active preload.js)
