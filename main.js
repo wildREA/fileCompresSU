@@ -1,12 +1,36 @@
-const { app, BrowserWindow } = require('electron');
+import { app, BrowserWindow, ipcMain } from require('electron');
+import { createGzip } from 'zlib';
+import { createReadStream, createWriteStream } from 'fs';
+import { basename, join } from 'path';
 
+// ipcMain event to handle file compression
+ipcMain.handle('compress-file', async (_event, filePaths) => {
+  const outputPaths;
+  for (const inputPath of filePaths) {
+    const name = basename(inputPath);
+    const outPath = join(app.getPath('desktop'), `${name}.gz`);
+    await new Promise<void>((resolve, reject) => {
+      const input = createReadStream(inputPath);
+      const gzip = createGzip();
+      const output = createWriteStream(outPath);
+      input.pipe(gzip).pipe(output)
+        .on('finish', () => resolve())
+        .on('error', reject);
+  });
+    outputPaths.push(outPath);
+  }
+  _event.sender.send('compressed-files', outputPaths);
+  return outputPaths;
+});
+
+// Main process
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,  // This should be true for security best practices (active preload.js)
+      contextIsolation: true,  // This should be true for security best practices (active preload.js)
       preload: __dirname + '/preload.js' // Preload script for security
     }
   });
