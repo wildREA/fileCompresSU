@@ -1,41 +1,6 @@
-// Importing the compression utility functions
-const {
-  setupDropzoneHandlers,
-  setupCompressionListeners,
-  createDownloadElements,
-} = require("./utils/compression");
+// This file will use the Electron API to handle file compression and downloads.
+// Functions will be called from require(). The functions are in compression.ts.
 
-// Get DOM elements
-const dropzone = document.getElementById("dropzone-file") as HTMLDivElement;
-const downloads = document.getElementById("download-section") as HTMLDivElement;
-const compressed = document.getElementById("compression-results") as HTMLDivElement;
-
-// Verify that we have all required elements
-if (!dropzone || !downloads || !compressed) {
-  console.error("Missing required DOM elements");
-} else {
-  // Set up the dropzone handlers for drag and drop
-  setupDropzoneHandlers(dropzone);
-
-  // Set up compression listeners
-  setupCompressionListeners({
-    onCompressionComplete: (compressedPaths: string[]) => {
-      // Unhide the download section
-      downloads.classList.remove("hidden");
-
-      // Clear previous content
-      compressed.innerHTML = "";
-
-      // Add download links for each compressed file
-      const downloadElements: HTMLElement[] = createDownloadElements(compressedPaths);
-      downloadElements.forEach((element) => {
-        compressed.appendChild(element);
-      });
-    },
-    onCompressionError: (error: unknown) => {
-      console.error("Compression error:", error);
-      // Optional: Show an error message in the UI
-      alert("Error compressing files. Please try again.");
-    },
-  });
-}
+// Here reference to index.html will be used to handle uploads for the dropzone-file,
+// make the magic behind compressing the files and then listing them in the hidden download-section (index.html element),
+// and then be downloadable from the list.

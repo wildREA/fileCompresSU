@@ -1,5 +1,6 @@
-node_modules/
+vscode/
 dist/
-*.log
+node_modules/
 *.env
+*.log
 *.tsbuildinfo
