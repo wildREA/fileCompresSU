@@ -1,52 +1,41 @@
-// This file is used to render the logic of the app
-// Importing immigrants
-import { a, b, add } from "./utils/test.js";
+// Importing the compression utility functions
+import {
+  setupDropzoneHandlers,
+  setupCompressionListeners,
+  createDownloadElements,
+} from "./utils/compression";
 
-add(a, b);
-
-// Importing the logic
-import { ipcRenderer } from "electron";
-import * as path from "path";
+// Get DOM elements
 const dropzone = document.getElementById("dropzone-file") as HTMLDivElement;
 const downloads = document.getElementById("download-section") as HTMLDivElement;
 const compressed = document.getElementById("compression-results") as HTMLDivElement;
 
-["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-  dropzone.addEventListener(eventName, (e) => e.preventDefault());
-});
+// Verify that we have all required elements
+if (!dropzone || !downloads || !compressed) {
+  console.error("Missing required DOM elements");
+} else {
+  // Set up the dropzone handlers for drag and drop
+  setupDropzoneHandlers(dropzone);
 
-dropzone.addEventListener("dragover", () => {
-  dropzone.classList.add("dragover");
-});
+  // Set up compression listeners
+  setupCompressionListeners({
+    onCompressionComplete: (compressedPaths) => {
+      // Unhide the download section
+      downloads.classList.remove("hidden");
 
-dropzone.addEventListener("dragleave", () => {
-  dropzone.classList.remove("dragover");
-});
+      // Clear previous content
+      compressed.innerHTML = "";
 
-// Handle drop event
-dropzone.addEventListener("drop", (e) => {
-  dropzone.classList.remove("dragover");
-  if (!e.dataTransfer) return;
-  const files: string[] = [];
-  for (const file of Array.from(e.dataTransfer.files)) {
-    files.push(file.webkitRelativePath);
-  }
-  ipcRenderer.invoke("compress-files", files);
-});
-
-// Listen for compressed files path replies
-ipcRenderer.on('compressed-files', (_e, compressedPaths: string[]) => {
-  // Unhide the download section
-  downloads.classList.remove("hidden");
-  // Populate list
-  compressed.innerHTML = "";
-  compressedPaths.forEach((compressedPaths) => {
-    const li = document.createElement("li");
-    const a = document.createElement("a");
-    a.href = `file://${compressedPaths}`;
-    a.textContent = path.basename(compressedPaths);
-    a.setAttribute("download", '');
-    li.appendChild(a);
-    compressed.appendChild(li);
+      // Add download links for each compressed file
+      const downloadElements = createDownloadElements(compressedPaths);
+      downloadElements.forEach((element) => {
+        compressed.appendChild(element);
+      });
+    },
+    onCompressionError: (error) => {
+      console.error("Compression error:", error);
+      // Optional: Show an error message in the UI
+      alert("Error compressing files. Please try again.");
+    },
   });
-});
+}
