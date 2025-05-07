@@ -7,79 +7,66 @@
     <script type="module" src="renderer.js" defer></script>
     <link rel="stylesheet" href="dist/styles.css" />
   </head>
-<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
-
-  <!-- main container -->
-  <div
-    class="
-      flex flex-col items-center
-      gap-y-8                  /* 2rem vertical gap between children */
-      w-full                   /* full width on xs */
-      sm:w-11/12               /* ~91.6% on ≥640px */
-      md:w-3/4                 /* 75% on ≥768px */
-      lg:w-1/2                 /* 50% on ≥1024px */
-      xl:w-2/5                 /* 40% on ≥1280px */
-      px-4                     /* small side padding so nothing touches edge */
-    "
+  <body
+    class="bg-gray-900 text-white flex items-center justify-center h-screen"
   >
-    <!-- Download section - initially hidden -->
-    <div id="download-section" class="w-full bg-gray-800 rounded-lg p-5 hidden">
-      <h2 class="text-xl font-bold mb-3">Compressed Files Ready!</h2>
-      <div id="compression-results" class="space-y-3">
-        <!-- Results will be inserted here dynamically -->
+    <!-- main container -->
+    <div
+      class="flex flex-col items-center gap-y-8 w-full sm:w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 px-4"
+      <!--
+      Download
+      section
+      -
+      initially
+      hidden
+      --
+    >
+      <div
+        id="download-section"
+        class="w-full bg-gray-800 rounded-lg p-5 hidden"
+      >
+        <h2 class="text-xl font-bold mb-3">Compressed Files Ready!</h2>
+        <div id="compression-results" class="space-y-3">
+          <!-- Results will be inserted here dynamically -->
+        </div>
       </div>
+
+      <!-- file upload -->
+      <label
+        for="dropzone-file"
+        class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:border-gray-500 cursor-pointer text-gray-700 dark:text-gray-300"
+      >
+        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+          <svg
+            class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 20 16"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+            />
+          </svg>
+          <p class="mb-2 text-sm">
+            <span class="font-semibold">Click to upload</span> or drag and drop
+          </p>
+          <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+        </div>
+        <input id="dropzone-file" type="file" class="hidden" multiple />
+      </label>
+
+      <!-- compress button -->
+      <button
+        id="compress"
+        class="w-full sm:w-auto /* full-width on xs, auto-width on sm+ */ bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
+      >
+        Compress
+      </button>
     </div>
-
-    <!-- file upload -->
-    <label
-      for="dropzone-file"
-      class="
-        flex flex-col items-center justify-center
-        w-full h-64
-        border-2 border-dashed border-gray-300 rounded-lg
-        bg-gray-50 dark:bg-gray-700 dark:border-gray-600
-        hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:border-gray-500
-        cursor-pointer
-        text-gray-700 dark:text-gray-300
-      "
-    >
-      <div class="flex flex-col items-center justify-center pt-5 pb-6">
-        <svg
-          class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 20 16"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-          />
-        </svg>
-        <p class="mb-2 text-sm">
-          <span class="font-semibold">Click to upload</span> or drag and drop
-        </p>
-        <p class="text-xs">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
-      </div>
-      <input id="dropzone-file" type="file" class="hidden" multiple />
-    </label>
-
-    <!-- compress button -->
-    <button
-      id="compress"
-      class="
-        w-full sm:w-auto      /* full-width on xs, auto-width on sm+ */
-        bg-blue-500 hover:bg-blue-700
-        text-white font-bold
-        py-2 px-6 rounded
-      "
-    >
-      Compress
-    </button>
-  </div>
-
-</body>
+  </body>
 </html>
