@@ -25,7 +25,7 @@
 
 <div align="center">
   <p>
-    Also known as Electron or EAM (ˈiː.æm / иям)<br />
+    Also known as Compressudo or Kompres (kʰʌmˈprʲɛs / kh-UHM-’PREHS)<br />
     <a href=""><strong>Explore the docs »</strong></a>
   </p>
 </div>
