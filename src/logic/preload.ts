@@ -1,6 +1,20 @@
-import { contextBridge, ipcRenderer } from 'electron';
+// Preload script
+const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('electron', {
-    compressFiles: (files: string[]) => ipcRenderer.invoke('compress-files', files),
-    onCompressed: (callback: (paths: string[]) => void) => ipcRenderer.on('files-compressed', (_e, compressedPaths: string[]) => callback(compressedPaths)),
+// Expose protected methods to renderer process through contextBridge
+contextBridge.exposeInMainWorld('electronAPI', {
+  // For compressing files
+  compressFiles: (filePaths: string[]) => {
+    return ipcRenderer.invoke('compress-files', filePaths);
+  },
+  
+  // For showing a file in the file explorer
+  showItemInFolder: (path: string) => {
+    ipcRenderer.send('show-item-in-folder', path);
+  },
+  
+  // For showing a file open dialog
+  openFileDialog: () => {
+    return ipcRenderer.invoke('open-file-dialog');
+  }
 });
