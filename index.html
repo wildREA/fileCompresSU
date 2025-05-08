@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <title>File Compressu</title>
+    <!-- Keep the Tailwind CDN as requested -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" src="renderer.js" defer></script>
-    <link rel="stylesheet" href="dist/styles.css" />
+    <link rel="stylesheet" href="dist/styles.css">
+    <script src="dist/logic/renderer.js" defer></script>
   </head>
   <body
     class="bg-gray-900 text-white flex items-center justify-center h-screen"
@@ -13,7 +14,7 @@
     <!-- main container -->
     <div
       class="flex flex-col items-center gap-y-8 w-full sm:w-11/12 md:w-3/4 lg:w-1/2 xl:w-2/5 px-4"
-    >  <!-- Fixed missing closing angle bracket -->
+    >
       <!-- Download section - initially hidden -->
       <div
         id="download-section"
@@ -57,7 +58,7 @@
       <!-- compress button -->
       <button
         id="compress"
-        class="w-full sm:w-auto /* full-width on xs, auto-width on sm+ */ bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
+        class="w-full sm:w-auto bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
       >
         Compress
       </button>
