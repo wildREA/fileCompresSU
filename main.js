@@ -9,7 +9,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: true,
       preload: path.join(__dirname, 'dist/logic/preload.js')
     }
