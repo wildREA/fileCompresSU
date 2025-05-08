@@ -4,3 +4,6 @@ node_modules/
 *.env
 *.log
 *.tsbuildinfo
+LICENSE
+README.md
+package-lock.json
