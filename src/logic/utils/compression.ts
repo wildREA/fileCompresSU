@@ -32,6 +32,9 @@ export interface FileInfo {
   id?: string; // Adding ID to help with deduplication
 }
 
+// Module level variable to store selected files
+let selectedFiles: FileInfo[] = [];
+
 // Helper to generate unique ID for files
 function generateFileId(file: FileInfo): string {
   return `${file.name}-${file.size}-${file.path || ''}`;
@@ -63,9 +66,6 @@ export function setupDropzone(
   fileInputElement: HTMLInputElement,
   onFilesSelected: (files: FileInfo[]) => void
 ): void {
-  // Track files to prevent duplicates
-  let selectedFiles: FileInfo[] = [];
-
   // Handle file selection via file input
   fileInputElement.addEventListener('change', (event) => {
     const target = event.target as HTMLInputElement;
@@ -227,7 +227,6 @@ export function updateDropzoneUI(dropzoneElement: HTMLElement, files: FileInfo[]
  */
 export function setupCompressButton(
   buttonElement: HTMLButtonElement,
-  selectedFiles: FileInfo[],
   onCompressionStart: () => void,
   onCompressionComplete: (files: CompressedFile[]) => void,
   onCompressionError: (error: any) => void

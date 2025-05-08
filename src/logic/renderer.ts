@@ -65,8 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Set up compress button click handler
   setupCompressButton(
-    compressButton, 
-    selectedFiles,
+    compressButton,
     // Compression start handler
     () => {
       console.log('Compression started for', selectedFiles.length, 'files');
