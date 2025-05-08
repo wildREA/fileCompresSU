@@ -21,7 +21,7 @@
   <img src="https://i.ibb.co/nsk18g9Y/slav-dev-2tone.png" alt="development_team" width="40%" height="auto">
 </div>
 
-<h3 align="center">Electronic Automotive Market</h3>
+<h3 align="center">File CompresSU</h3>
 
 <div align="center">
   <p>
