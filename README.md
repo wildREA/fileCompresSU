@@ -1,19 +1,19 @@
 <a id="readme-top"></a>
 <p align="center">
-  <a href="https://github.com/wildREA/computerComponentsTracker/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/wildREA/computerComponentsTracker?style=flat-square" alt="Contributors" width="155"/>
+  <a href="https://github.com/wildREA/fileCompresSU/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/wildREA/fileCompresSU?style=flat-square" alt="Contributors" width="155"/>
   </a>
-  <a href="https://github.com/wildREA/computerComponentsTracker/network/members">
-    <img src="https://img.shields.io/github/forks/wildREA/computerComponentsTracker?style=flat-square" alt="Forks" width="88"/>
+  <a href="https://github.com/wildREA/fileCompresSU/network/members">
+    <img src="https://img.shields.io/github/forks/wildREA/fileCompresSU?style=flat-square" alt="Forks" width="88"/>
   </a>
-  <a href="https://github.com/wildREA/computerComponentsTracker/stargazers">
-    <img src="https://img.shields.io/github/stars/wildREA/computerComponentsTracker?style=flat-square" alt="Stars" width="88"/>
+  <a href="https://github.com/wildREA/fileCompresSU/stargazers">
+    <img src="https://img.shields.io/github/stars/wildREA/fileCompresSU?style=flat-square" alt="Stars" width="88"/>
   </a>
-  <a href="https://github.com/wildREA/computerComponentsTracker/issues">
-    <img src="https://img.shields.io/github/issues/wildREA/computerComponentsTracker?style=flat-square" alt="Issues" width="147.5"/>
+  <a href="https://github.com/wildREA/fileCompresSU/issues">
+    <img src="https://img.shields.io/github/issues/wildREA/fileCompresSU?style=flat-square" alt="Issues" width="147.5"/>
   </a>
-  <a href="https://github.com/wildREA/computerComponentsTracker/blob/master/LICENSE.txt">
-    <img src="https://img.shields.io/github/license/wildREA/computerComponentsTracker?style=flat-square" alt="License" width="220"/>
+  <a href="https://github.com/wildREA/fileCompresSU/blob/master/LICENSE.txt">
+    <img src="https://img.shields.io/github/license/wildREA/fileCompresSU?style=flat-square" alt="License" width="168"/>
   </a>
 </p>
 
