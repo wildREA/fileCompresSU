@@ -1,7 +1,12 @@
 // This file contains utility functions for file compression and download handling.
 
-// Import necessary modules using ES module syntax
-import * as path from "path";
+// Simple path utility functions for browser environment
+const pathUtils = {
+  basename: (pathString: string): string => {
+    // Simple implementation to extract filename from a path
+    return pathString.split("/").pop()?.split("\\").pop() || "";
+  },
+};
 
 // Types for better type safety - now exported explicitly
 export interface CompressedFile {
@@ -17,8 +22,10 @@ declare global {
   interface Window {
     electronAPI: {
       compressFiles: (filePaths: string[]) => Promise<CompressedFile[]>;
+      compressFileObjects: (files: any[]) => Promise<CompressedFile[]>;
       showItemInFolder: (path: string) => void;
       openFileDialog: () => Promise<string[]>;
+      getNativeFilePath: (fileObj: any) => string | null;
     };
   }
 }
@@ -30,6 +37,8 @@ export interface FileInfo {
   size: number;
   type: string;
   id?: string; // Adding ID to help with deduplication
+  // We'll allow additional properties to be attached to the object
+  [key: string]: any;
 }
 
 // Module level variable to store selected files
@@ -75,18 +84,32 @@ export function setupDropzone(
       );
 
       const fileInfos = Array.from(target.files).map((file) => {
-        const fileInfo = {
+        // Store the original File object for later access
+        const originalFile = file;
+
+        // Use our enhanced getNativeFilePath API to get the file path
+        // In Electron, the File object might have a path property or other internal properties
+        const nativePath = window.electronAPI.getNativeFilePath(originalFile);
+        console.log(`Getting native path for ${file.name}:`, nativePath);
+
+        const fileInfo: FileInfo = {
           name: file.name,
-          path: (file as any).path, // Electron specific property
+          path: nativePath || (file as any).path, // Try both approaches
           size: file.size,
           type: file.type,
-        };
+          // Store a reference to the original file for potential later use
+          _originalFile: originalFile,
+        } as FileInfo & { _originalFile: File };
+
+        const id = generateFileId(fileInfo);
 
         return {
           ...fileInfo,
-          id: generateFileId(fileInfo),
+          id: id,
         };
       });
+
+      console.log("File info objects after processing:", fileInfos);
 
       // Filter out duplicate files
       const newFiles = fileInfos.filter(
@@ -95,6 +118,8 @@ export function setupDropzone(
 
       // Update selected files
       selectedFiles = [...selectedFiles, ...newFiles];
+
+      console.log("Updated selected files:", selectedFiles);
 
       onFilesSelected(selectedFiles);
       updateDropzoneUI(dropzoneElement, selectedFiles);
@@ -139,18 +164,56 @@ export function setupDropzone(
       );
 
       const fileInfos = Array.from(e.dataTransfer.files).map((file) => {
-        const fileInfo = {
+        // Store the original File object
+        const originalFile = file;
+
+        // Try to get native path from the dropped file
+        const nativePath = window.electronAPI.getNativeFilePath(originalFile);
+        console.log(
+          `Getting native path for dropped file ${file.name}:`,
+          nativePath
+        );
+
+        // For drag and drop on Electron, we need to check all possible properties
+        // where the path might be stored
+        let possiblePath = nativePath;
+        if (!possiblePath && (file as any).path) {
+          possiblePath = (file as any).path;
+        }
+
+        // On macOS/Linux, files dropped into Electron might have a different property
+        if (!possiblePath && (e as any).dataTransfer.items) {
+          const item = Array.from((e as any).dataTransfer.items).find(
+            (i) =>
+              (i as any).getAsFile && (i as any).getAsFile().name === file.name
+          );
+          if (
+            item &&
+            (item as any).getAsFile &&
+            (item as any).getAsFile().path
+          ) {
+            possiblePath = (item as any).getAsFile().path;
+          }
+        }
+
+        const fileInfo: FileInfo = {
           name: file.name,
-          path: (file as any).path, // Electron specific property
+          path: possiblePath, // Use the path we found or null
           size: file.size,
           type: file.type,
-        };
+          // Store a reference to the original file
+          _originalFile: originalFile,
+        } as FileInfo & { _originalFile: File };
+
+        const id = generateFileId(fileInfo);
 
         return {
           ...fileInfo,
-          id: generateFileId(fileInfo),
+          id: id,
         };
       });
+
+      console.log("File info objects after drop processing:", fileInfos);
 
       // Filter out duplicate files
       const newFiles = fileInfos.filter(
@@ -159,6 +222,8 @@ export function setupDropzone(
 
       // Update selected files
       selectedFiles = [...selectedFiles, ...newFiles];
+
+      console.log("Updated selected files after drop:", selectedFiles);
 
       onFilesSelected(selectedFiles);
       updateDropzoneUI(dropzoneElement, selectedFiles);
@@ -259,15 +324,72 @@ export function setupCompressButton(
       buttonElement.textContent = "Compressing...";
       buttonElement.classList.add("opacity-70");
 
-      // Extract paths from file info objects
-      let filePaths = await (window as any).electronAPI.openFileDialog();
-      if (!filePaths || filePaths.length === 0) {
-        console.warn("No valid paths found for compression");
-        return;
-      }
+      console.log("Selected files before compression:", selectedFiles);
 
-      // Send to main process for compression via IPC
-      const result = await compressFiles(filePaths);
+      // If we don't have paths for the files, try to get them one more time
+      const filesToProcess = await Promise.all(
+        selectedFiles.map(async (file) => {
+          // If we already have a path, use it
+          if (file.path) {
+            return file;
+          }
+
+          // For files that don't have paths, try to get the native path
+          // This applies the getNativeFilePath function to any potential internal properties
+          const fileObj = selectedFiles.find((f) => f.id === file.id);
+          if (fileObj && window.electronAPI.getNativeFilePath) {
+            const nativePath = window.electronAPI.getNativeFilePath(fileObj);
+            if (nativePath) {
+              console.log(
+                `Retrieved native path for ${file.name}:`,
+                nativePath
+              );
+              return { ...file, path: nativePath };
+            }
+          }
+
+          return file;
+        })
+      );
+
+      // Update the selectedFiles with any retrieved paths
+      selectedFiles = filesToProcess;
+
+      // First try to get file paths
+      const filePaths = selectedFiles
+        .map((file) => file.path)
+        .filter(Boolean) as string[];
+
+      // Log for debugging
+      console.log("File paths extracted for compression:", filePaths);
+
+      let result;
+
+      // If we have paths, use the traditional method
+      if (filePaths.length > 0) {
+        console.log("Starting compression with paths:", filePaths);
+        result = await compressFiles(filePaths);
+      }
+      // Otherwise use the new method that sends file objects directly
+      else {
+        console.log(
+          "No valid paths found, using direct file object compression"
+        );
+
+        // Use files that have the original File object
+        const fileObjects = selectedFiles.filter(
+          (file) => file._originalFile instanceof File
+        );
+
+        if (fileObjects.length === 0) {
+          console.warn("No valid file objects found");
+          onCompressionError(new Error("Could not access file data."));
+          return;
+        }
+
+        console.log("Starting compression with file objects:", fileObjects);
+        result = await compressFileObjects(fileObjects);
+      }
 
       // Process and handle the compressed files
       onCompressionComplete(result);
@@ -289,6 +411,15 @@ export function setupCompressButton(
 export function compressFiles(filePaths: string[]): Promise<CompressedFile[]> {
   // Using "as any" to avoid TypeScript error since we've declared the type globally
   return (window as any).electronAPI.compressFiles(filePaths);
+}
+
+/**
+ * Compress file objects directly using the main process
+ */
+export function compressFileObjects(
+  fileObjects: any[]
+): Promise<CompressedFile[]> {
+  return (window as any).electronAPI.compressFileObjects(fileObjects);
 }
 
 /**
@@ -323,11 +454,8 @@ export function updateDownloadSection(
     const fileInfo = document.createElement("div");
     fileInfo.className = "flex-1";
 
-    // Create truncated name for compressed file
-    const fileNameParts = file.originalName.split(".");
-    const extension = fileNameParts.pop() || "";
-    const baseName = fileNameParts.join(".");
-    const compressedName = `${baseName}-compressed.${extension}`;
+    // Get the actual compressed file name from the path
+    const compressedName = pathUtils.basename(file.compressedPath);
 
     const fileName = document.createElement("p");
     fileName.className = "font-medium text-white truncate";
