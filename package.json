@@ -22,7 +22,12 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "imagemin": "^9.0.1",
+    "imagemin-gifsicle": "^7.0.0",
     "imagemin-mozjpeg": "^10.0.0",
-    "imagemin-pngquant": "^10.0.0"
+    "imagemin-pngquant": "^10.0.0",
+    "imagemin-svgo": "^11.0.1",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.2.133",
+    "sharp": "^0.34.1"
   }
 }
