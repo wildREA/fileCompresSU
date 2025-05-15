@@ -52,7 +52,6 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
@@ -163,7 +162,7 @@ We have an exciting roadmap planned for future updates:
 
 - [x] Complete README documentation
 - [x] Release management and updates
-- [ ] Implement compression <a href="#about-the-project">formats</a>:
+- [x] Implement compression <a href="#about-the-project">formats</a>:
   - [x] Image
   - [x] Document
   - [x] Text
@@ -187,9 +186,9 @@ Contributions are warmly welcomed! We rely on community input to expand supporte
 5. Implement your feature or fix. Add tests if applicable.
 6. Run tests and ensure everything passes (`npm start`)
 7. Commit and push your branch
-   `git add .
-    git commit -m "{insert_description}"
-    git push origin feature/<your-feature-name>`
+   `git add .`
+    `git commit -m "{insert_description}"`
+    `git push origin feature/<your-feature-name>`
 9. Open a Pull Request
 
 Your efforts help make this project even better—thank you!
@@ -214,11 +213,5 @@ Feel free to reach out with any questions or suggestions:
 - **Project Repository:** [https://github.com/wildREA/electron-market](https://github.com/wildREA/electron-market)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
-## Acknowledgments
-
-A special thank you to all contributors and supporters of the Electronic Automotive Market project. Your involvement makes our projects vibrant and innovative.
 
 ---
