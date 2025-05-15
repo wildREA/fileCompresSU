@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
+const { autoUpdater } = require("electron-updater");
 const path = require("path");
 const fs = require("fs");
 const archiver = require("archiver");
@@ -11,6 +12,12 @@ const imageminGifsicle = require("imagemin-gifsicle");
 const imageminSvgo = require("imagemin-svgo");
 const sharp = require("sharp");
 const { PDFDocument } = require("pdf-lib");
+
+// Import notifications module
+import * as notifier from "./au-notifications.js";
+
+// Destructure the functions
+const { setupAutoUpdaterListeners } = notifier;
 
 // Create application window
 function createWindow() {
@@ -497,6 +504,12 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
 // App lifecycle events
 app.whenReady().then(() => {
   createWindow();
+
+  // Setup auto-updater listeners
+  setupAutoUpdaterListeners(autoUpdater, dialog);
+
+  // Automation: Check for updates
+  autoUpdater.checkForUpdatesAndNotify();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
