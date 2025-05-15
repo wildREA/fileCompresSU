@@ -1,4 +1,5 @@
 <a id="readme-top"></a>
+
 <p align="center">
   <a href="https://github.com/wildREA/fileCompresSU/graphs/contributors">
     <img src="https://img.shields.io/github/contributors/wildREA/fileCompresSU?style=flat-square" alt="Contributors" width="155"/>
@@ -76,7 +77,6 @@ fileCompresSU is a modern, minimalistic designed application used for file compr
 - .js
 - .json
 
-
 **Key Features:**
 
 - **Non-specific Format:** All of the supported formats are above, but of those are non-selective; you do not have to select a format when using the compressor.
@@ -88,6 +88,7 @@ fileCompresSU is a modern, minimalistic designed application used for file compr
 ---
 
 ### Built With
+
 <div align="center">
 	<table>
 		<tr>
@@ -184,12 +185,12 @@ Contributions are warmly welcomed! We rely on community input to expand supporte
 3. Install dependencies (`npm install`)
 4. Create a feature branch for your changes (`git checkout -b feature/<your-feature-name>`)
 5. Implement your feature or fix. Add tests if applicable.
-6. Run tests and ensure everything passes (`npm start`)
+6. Run tests and ensure everything passes (`npm start`) <!-- If the terminal repeats the execution sequence, then simply press 'CTRL + E' and then run the command once more -->
 7. Commit and push your branch
    `git add .`
-    `git commit -m "{insert_description}"`
-    `git push origin feature/<your-feature-name>`
-9. Open a Pull Request
+   `git commit -m "{insert_description}"`
+   `git push origin feature/<your-feature-name>`
+8. Open a Pull Request
 
 Your efforts help make this project even better—thank you!
 
