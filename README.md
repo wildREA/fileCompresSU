@@ -53,6 +53,7 @@
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li><a href="#architecture">Architecture</a></li>
   </ol>
 </details>
 
@@ -212,6 +213,74 @@ Feel free to reach out with any questions or suggestions:
 
 - **wildREA:** @wildrea / wildREA#8123 (Discord)
 - **Project Repository:** [https://github.com/wildREA/electron-market](https://github.com/wildREA/electron-market)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+## Architecture
+
+fileCompresSU follows a well-organized Electron application architecture that separates concerns between the main process and renderer process:
+
+```
+fileCompressor/
+├── build/                      # Build assets including application icons
+│   ├── icon.icns               # macOS application icon
+│   ├── icon.ico                # Windows application icon
+│   └── icon.png                # General application icon
+├── src/ (app source code)      # Core application source code (logic, UI, assets)
+│   ├── images/                 # Application images
+│   │   └── appIcon.png         # App icon used within the application
+│   ├── logic/                  # Application logic
+│   │   ├── preload.ts          # Preload script (secure bridge between renderer and main)
+│   │   ├── renderer.ts         # Renderer process code (UI interactions)
+│   │   └── utils/              # Utility functions
+│   │       └── compression.ts  # File compression handling logic
+│   └── styles/                 # Styling
+│       └── tailwind.css        # TailwindCSS stylesheet
+├── main.js                     # Main process entry point (Electron)
+├── index.html                  # Main application HTML
+├── au-notifications.js         # Auto-update notification handling
+├── package.json                # Project dependencies and config
+└── tsconfig.json               # TypeScript configuration
+```
+
+### Key Components
+
+1. **Main Process (`main.js`)**
+
+   - Controls the application lifecycle
+   - Handles file system operations
+   - Implements file compression algorithms
+   - Manages IPC (Inter-Process Communication) with the renderer
+
+2. **Preload Script (`preload.ts`)**
+
+   - Creates a secure bridge between renderer and main processes
+   - Exposes controlled APIs to the renderer
+   - Handles file path extraction and security boundaries
+
+3. **Renderer Process (`renderer.ts`)**
+
+   - Manages the user interface
+   - Handles user interactions (file selection, drag and drop)
+   - Communicates with the main process via the preload bridge
+
+4. **Compression Utilities (`compression.ts`)**
+   - Provides utility functions for file handling
+   - Manages the compression workflow
+   - Handles file objects and path extraction
+
+### Data Flow
+
+1. User selects files via drag-and-drop or file dialog
+2. Renderer process captures file objects
+3. File data is transmitted to main process via the preload bridge
+4. Main process applies appropriate compression algorithm based on file type
+5. Compressed files are saved to the downloads directory
+6. Results are sent back to renderer for display to user
+
+This architecture follows Electron security best practices by maintaining proper separation between processes and implementing secure IPC communications.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
