@@ -184,7 +184,7 @@ Contributions are warmly welcomed! We rely on community input to expand supporte
 3. Install dependencies (`npm install`)
 4. Create a feature branch for your changes (`git checkout -b feature/<your-feature-name>`)
 5. Implement your feature or fix. Add tests if applicable.
-6. Run tests and ensure everything passes (`npm start`)
+6. Run tests and ensure everything passes (`npm start`)   <!-- If the terminal repeats the execution sequence, then simply press 'CTRL + E' and then run the command once more -->
 7. Commit and push your branch
    `git add .`
     `git commit -m "{insert_description}"`
