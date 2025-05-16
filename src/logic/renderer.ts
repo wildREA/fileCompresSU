@@ -4,7 +4,7 @@
 // Import compression module
 import * as compressionModule from "./utils/compression.js";
 
-// Destructure the functions
+// Destr ucture the functions
 const { setupDropzone, setupCompressButton, updateDownloadSection } =
   compressionModule;
 

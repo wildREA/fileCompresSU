@@ -1,8 +1,12 @@
 .vscode/
 dist/
+*.asar
+build/
 node_modules/
 *.env
 *.log
+*.snap
+*.yml
 *.tsbuildinfo
 LICENSE
 README.md
