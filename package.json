@@ -11,7 +11,7 @@
   "build": {
     "appId": "com.slavdev.filecompresSU",
     "productName": "FileCompresSU",
-    "Files": [
+    "files": [
       "**/**"
     ],
     "directories": {
@@ -25,10 +25,10 @@
       }
     ]
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["file", "compression", "electron", "image", "pdf", "utility"],
+  "author": "SlavDev",
   "license": "ISC",
-  "description": "",
+  "description": "A modern file compression application for images, PDFs, and text files",
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.5",
     "autoprefixer": "^10.4.21",

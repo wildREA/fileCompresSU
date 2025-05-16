@@ -61,7 +61,7 @@
 
 ## About The Project
 
-fileCompresSU is a modern, minimalistic designed application used for file compression for images (e.g. .jp(e)g, .png, .gif, .webp, .svg), PDF documents, text (e.g. .txt, .md, .html, .css, .js, .json).
+fileCompresSU is a modern, minimalistic designed application used for file compression of images, documents, and text.
 
 **Supported Formats:**
 
@@ -129,23 +129,6 @@ fileCompresSU is a modern, minimalistic designed application used for file compr
 
 ---
 
-## Getting Started
-
-Interested in exploring the application firsthand? Follow these simple steps to get started:
-
-### Installation (RELEASES TBD)
-
-1. **Download:** Head over to the [Releases](https://github.com/wildREA/computerComponentsTracker/tags) page and download the latest version.
-2. **Extract:** Unzip the downloaded folder to your preferred location.
-3. **Run Setup:** Launch `setup.exe` and follow the installation prompts.
-4. **Installation:** Click `Install` when prompted.
-
-Once installed, the application will automatically launch, providing you with an engaging interface that showcases a variety of cars along with their hardware statistics. If you encounter an "Unknown Publisher" warning, rest assured it is due to the software not being signed—a common situation with unsigned applications.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
 ## Usage
 
 fileCompresSU handles seamless compression of images, PDFs, and text-based files with these core features:
@@ -155,6 +138,25 @@ fileCompresSU handles seamless compression of images, PDFs, and text-based files
 - **Instant Download:** Download your compressed file immediately—no ads, no wait times, and no hidden cooldowns.
 
 This design ensures a user-friendly experience while maintaining a clean look and feel.
+
+**From developer:** It's relevant to mention that the releases are not built with any Organization- or Extended Validation (OV/EV). You can choose to either <a href="#installation">install</a> the application or <a href="#contributing">run it raw</a>.
+
+---
+
+## Getting Started
+
+Interested in exploring the application firsthand? Follow these simple steps to get started:
+
+### Installation
+
+1. **Download:** Head over to the [Releases](https://github.com/wildREA/computerComponentsTracker/tags) page and download the latest version.
+2. **Extract:** Unzip the downloaded folder to your preferred location.
+3. **Run Setup:** Launch `setup.exe` and follow the installation prompts.
+4. **Installation:** Click `Install` when prompted.
+
+Once installed, the application will automatically launch, providing you with an engaging interface that showcases a variety of cars along with their hardware statistics. If you encounter an "Unknown Publisher" warning, rest assured it is due to the software not being signed—a common situation with unsigned applications.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ---
 
@@ -175,44 +177,9 @@ Your feedback and suggestions are always welcome as we continue to evolve this p
 
 ---
 
-## Contributing
-
-Contributions are warmly welcomed! We rely on community input to expand supported formats and enhance compression engines.
-
-**Quick Contribution Guide:**
-
-1. Fork the project
-2. Clone your fork locally (`git clone https://github.com/<your-username>/fileCompresSU.git`)
-3. Install dependencies (`npm install`)
-4. Create a feature branch for your changes (`git checkout -b feature/<your-feature-name>`)
-5. Implement your feature or fix. Add tests if applicable.
-6. Run tests and ensure everything passes (`npm start`) <!-- If the terminal repeats the execution sequence, then simply press 'CTRL + E' and then run the command once more -->
-7. Commit and push your branch
-   `git add .`
-   `git commit -m "{insert_description}"`
-   `git push origin feature/<your-feature-name>`
-8. Open a Pull Request
-
-Your efforts help make this project even better—thank you!
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
 ## License
 
 This project is distributed under the [CC0 1.0 Universal License](https://github.com/wildREA/electron-market?tab=CC0-1.0-1-ov-file). Please review the license file for more details.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
-
-## Contact
-
-Feel free to reach out with any questions or suggestions:
-
-- **wildREA:** @wildrea / wildREA#8123 (Discord)
-- **Project Repository:** [https://github.com/wildREA/electron-market](https://github.com/wildREA/electron-market)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -281,6 +248,41 @@ fileCompressor/
 6. Results are sent back to renderer for display to user
 
 This architecture follows Electron security best practices by maintaining proper separation between processes and implementing secure IPC communications.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+## Contributing
+
+Contributions are warmly welcomed! We rely on community input to expand supported formats and enhance compression engines.
+
+**Quick Contribution Guide:**
+
+1. Fork the project
+2. Clone your fork locally (`git clone https://github.com/<your-username>/fileCompresSU.git`)
+3. Install dependencies (`npm install`)
+4. Create a feature branch for your changes (`git checkout -b feature/<your-feature-name>`)
+5. Implement your feature or fix. Add tests if applicable.
+6. Run tests and ensure everything passes (`npm start`) <!-- If the terminal repeats the execution sequence, then simply press 'CTRL + E' and then run the command once more -->
+7. Commit and push your branch
+   `git add .`
+   `git commit -m "{insert_description}"`
+   `git push origin feature/<your-feature-name>`
+8. Open a Pull Request
+
+Your efforts help make this project even better—thank you!
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+## Contact
+
+Feel free to reach out with any questions or suggestions:
+
+- **wildREA:** @wildrea / wildREA#8123 (Discord)
+- **Project Repository:** [https://github.com/wildREA/electron-market](https://github.com/wildREA/electron-market)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
