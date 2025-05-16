@@ -2,6 +2,7 @@
   "name": "filecompressu",
   "version": "1.0.0",
   "main": "main.js",
+  "type": "module",
   "scripts": {
     "start": "nodemon electron . --disable-gpu",
     "pack": "electron-builder --dir",
@@ -25,7 +26,14 @@
       }
     ]
   },
-  "keywords": ["file", "compression", "electron", "image", "pdf", "utility"],
+  "keywords": [
+    "file",
+    "compression",
+    "electron",
+    "image",
+    "pdf",
+    "utility"
+  ],
   "author": "SlavDev",
   "license": "ISC",
   "description": "A modern file compression application for images, PDFs, and text files",

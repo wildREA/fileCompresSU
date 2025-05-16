@@ -1,23 +1,31 @@
-const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
-const { autoUpdater } = require("electron-updater");
-const path = require("path");
-const fs = require("fs");
-const archiver = require("archiver");
+import { app, BrowserWindow, ipcMain, dialog, shell } from "electron";
+import pkg from "electron-updater";
+const { autoUpdater } = pkg;
+import path from "path";
+import fs from "fs";
+import archiver from "archiver";
 
 // Import compression libraries
-const imagemin = require("imagemin");
-const imageminPngquant = require("imagemin-pngquant");
-const imageminMozjpeg = require("imagemin-mozjpeg");
-const imageminGifsicle = require("imagemin-gifsicle");
-const imageminSvgo = require("imagemin-svgo");
-const sharp = require("sharp");
-const { PDFDocument } = require("pdf-lib");
+import imagemin from "imagemin";
+import imageminPngquant from "imagemin-pngquant";
+import imageminMozjpeg from "imagemin-mozjpeg";
+import imageminGifsicle from "imagemin-gifsicle";
+import imageminSvgo from "imagemin-svgo";
+import sharp from "sharp";
+import { PDFDocument } from "pdf-lib";
 
 // Import notifications module
 import * as notifier from "./au-notifications.js";
 
 // Destructure the functions
 const { setupAutoUpdaterListeners } = notifier;
+
+// Get current file URL for ES modules (replacement for __dirname)
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Create application window
 function createWindow() {
