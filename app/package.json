@@ -4,7 +4,8 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon electron . --disable-gpu",
+    "start": "electron .",
+    "dev": "nodemon --watch . --exec \"electron .\"",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --watch"
