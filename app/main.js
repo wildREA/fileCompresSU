@@ -268,10 +268,10 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
           outputPath = path.join(outputDir, `${baseName}-compressed.pdf`);
           compressedSize = await compressPdf(tempFilePath, outputPath);
         } else if (fileType === "text") {
-          // For text files, use our specialized text compression
-          outputPath = path.join(outputDir, `${baseName}-compressed.gz`);
+          // For text files, use our specialized text compression (.zip for Windows compatibility)
+          outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
           compressedSize = await compressTextFile(tempFilePath, outputPath);
-          console.log(`Text file compressed with gzip: ${fileName}`);
+          console.log(`Text file compressed with zip: ${fileName}`);
         } else {
           // For other file types, use standard zip compression
           outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
