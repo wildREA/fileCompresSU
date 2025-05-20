@@ -52,11 +52,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-<<<<<<< HEAD:app/main.js
-      preload: path.join(__dirname, "dist", "logic", "preload.js"),
-=======
       preload: path.join(__dirname, "dist/logic/preload.js"), // No need to change to .mjs as TypeScript compiler generates .js files
->>>>>>> c05236e (Saving files...):main.js
       webSecurity: false, // Allow access to local files (for development only)
     },
   });
