@@ -4,8 +4,7 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "electron .",
-    "dev": "nodemon --watch . --exec \"electron .\"",
+    "start": "nodemon electron . --disable-gpu",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --watch"
@@ -52,7 +51,7 @@
     "@tailwindcss/cli": "^4.1.5",
     "autoprefixer": "^10.4.21",
     "electron": "^36.1.0",
-    "electron-builder": "^25.1.8",
+    "electron-builder": "^26.0.12",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.5",

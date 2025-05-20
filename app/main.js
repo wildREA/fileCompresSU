@@ -1,21 +1,9 @@
-// Load the electron loader first to handle electron: protocol imports
-import "./.electron-loader.mjs";
-
 import { app, BrowserWindow, ipcMain, dialog, shell } from "electron";
+import pkg from "electron-updater";
+const { autoUpdater } = pkg;
 import path from "path";
 import fs from "fs";
 import archiver from "archiver";
-
-// Only import electron-updater when running in Electron (not during direct Node.js execution)
-let autoUpdater;
-try {
-  if (app) {
-    const pkg = await import("electron-updater");
-    autoUpdater = pkg.autoUpdater;
-  }
-} catch (error) {
-  console.log("Not running in Electron context, skipping autoUpdater");
-}
 
 // Import compression libraries
 import imagemin from "imagemin";
@@ -26,16 +14,11 @@ import imageminSvgo from "imagemin-svgo";
 import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
 
-// Import notifications module - only if we're actually using autoUpdater
-let setupAutoUpdaterListeners;
-if (app) {
-  try {
-    const notifier = await import("./au-notifications.mjs");
-    setupAutoUpdaterListeners = notifier.setupAutoUpdaterListeners;
-  } catch (error) {
-    console.log("Could not load auto-updater notifications");
-  }
-}
+// Import notifications module
+import * as notifier from "./au-notifications.js";
+
+// Destructure the functions
+const { setupAutoUpdaterListeners } = notifier;
 
 // Get current file URL for ES modules (replacement for __dirname)
 import { fileURLToPath } from "url";
@@ -52,7 +35,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-      preload: path.join(__dirname, "dist/logic/preload.js"), // No need to change to .mjs as TypeScript compiler generates .js files
+      preload: path.join(__dirname, "dist", "logic", "preload.js"),
       webSecurity: false, // Allow access to local files (for development only)
     },
   });
@@ -530,13 +513,11 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
 app.whenReady().then(() => {
   createWindow();
 
-  // Setup auto-updater listeners if available
-  if (autoUpdater) {
-    setupAutoUpdaterListeners(autoUpdater, dialog);
+  // Setup auto-updater listeners
+  setupAutoUpdaterListeners(autoUpdater, dialog);
 
-    // Automation: Check for updates
-    autoUpdater.checkForUpdatesAndNotify();
-  }
+  // Automation: Check for updates
+  autoUpdater.checkForUpdatesAndNotify();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
