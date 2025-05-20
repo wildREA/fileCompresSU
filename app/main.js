@@ -13,9 +13,13 @@ import imageminGifsicle from "imagemin-gifsicle";
 import imageminSvgo from "imagemin-svgo";
 import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
+import zlib from "zlib";
+import { promisify } from "util";
 
 // Import notifications module
-import * as notifier from "./au-notifications.js";
+import * as notifier from "./src/logic/utils/au-notifications.js";
+// Import protocol handler
+import { registerElectronProtocol } from "./src/logic/utils/protocol-handler.js";
 
 // Destructure the functions
 const { setupAutoUpdaterListeners } = notifier;
@@ -33,10 +37,10 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: true,
-      preload: path.join(__dirname, "dist", "logic", "preload.js"),
-      webSecurity: false, // Allow access to local files (for development only)
+      nodeIntegration: false, // Disable Node.js integration for security
+      contextIsolation: true, // Keep context isolation enabled
+      preload: path.join(__dirname, "dist/logic/preload.js"),
+      webSecurity: true, // Enable web security in production
     },
   });
 
@@ -163,166 +167,28 @@ async function compressPdf(inputPath, outputPath) {
   }
 }
 
-// Handle IPC for file compression - update name to match preload.ts
-ipcMain.handle("compress-files", async (event, filePaths) => {
+// Helper function to compress text files using gzip
+async function compressTextFile(inputPath, outputPath) {
   try {
-    console.log("Main process: compressing files with paths:", filePaths);
-
-    // Validate input
-    if (!Array.isArray(filePaths) || filePaths.length === 0) {
-      throw new Error("No valid file paths provided");
-    }
-
-    // Validate each path exists
-    for (const filePath of filePaths) {
-      if (!fs.existsSync(filePath)) {
-        console.error(`File does not exist: ${filePath}`);
-        throw new Error(`File not found: ${path.basename(filePath)}`);
-      }
-    }
-
-    // Create output directory if it doesn't exist
-    const outputDir = path.join(app.getPath("downloads"), "Compressed");
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-
-    const results = []; // Process each file
-    for (const filePath of filePaths) {
-      const originalSize = fs.statSync(filePath).size;
-      const fileName = path.basename(filePath);
-      console.log(`Processing file: ${fileName} (${filePath})`);
-
-      // Create a compressed file name with the -compressed suffix
-      const fileNameParts = fileName.split(".");
-      const extension = fileNameParts.pop() || "";
-      const baseName = fileNameParts.join(".");
-
-      // Determine the file type and compression method
-      const fileType = getFileType(fileName);
-      let outputPath;
-      let compressedSize;
-
-      try {
-        console.log(`Detected file type: ${fileType} for ${fileName}`);
-
-        // Apply different compression strategies based on file type
-        if (fileType === "image") {
-          // For images, use our image compression helper
-          outputPath = path.join(
-            outputDir,
-            `${baseName}-compressed.${extension}`
-          );
-          compressedSize = await compressImage(filePath, outputPath);
-        } else if (fileType === "pdf") {
-          // For PDFs, use our PDF compression helper
-          outputPath = path.join(outputDir, `${baseName}-compressed.pdf`);
-          compressedSize = await compressPdf(filePath, outputPath);
-        } else {
-          // For other file types, use standard zip compression
-          outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
-
-          const output = fs.createWriteStream(outputPath);
-          const archive = archiver("zip", {
-            zlib: { level: 9 }, // 0-9, 9 being highest compression
-          });
-
-          archive.on("warning", function (err) {
-            if (err.code !== "ENOENT") {
-              console.warn("Warning during compression:", err);
-            }
-          });
-
-          archive.on("error", function (err) {
-            console.error("Error during compression:", err);
-            throw err;
-          });
-
-          // Pipe archive data to the file
-          archive.pipe(output);
-
-          // Wait for the archive to finalize
-          await new Promise((resolve, reject) => {
-            output.on("close", () => {
-              console.log(
-                `${fileName} has been compressed - ${archive.pointer()} total bytes`
-              );
-              resolve();
-            });
-            output.on("error", reject);
-
-            // Add the file to the archive with its original name
-            archive.file(filePath, { name: fileName });
-
-            // Finalize the archive (this is important!)
-            archive.finalize();
-          });
-
-          compressedSize = fs.statSync(outputPath).size;
-        }
-      } catch (compressionError) {
-        console.error(`Error compressing ${fileName}:`, compressionError);
-
-        // If compression fails, fall back to zip compression
-        console.log(`Falling back to zip compression for ${fileName}`);
-        outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
-
-        const output = fs.createWriteStream(outputPath);
-        const archive = archiver("zip", {
-          zlib: { level: 9 }, // 0-9, 9 being highest compression
-        });
-
-        archive.on("warning", (err) => {
-          if (err.code !== "ENOENT") {
-            console.warn("Warning during fallback compression:", err);
-          }
-        });
-
-        archive.on("error", (err) => {
-          console.error("Error during fallback compression:", err);
-          throw err;
-        });
-
-        archive.pipe(output);
-
-        // Wait for the archive to finalize
-        await new Promise((resolve, reject) => {
-          output.on("close", resolve);
-          output.on("error", reject);
-          archive.file(filePath, { name: fileName });
-          archive.finalize();
-        });
-
-        // Get the size after fallback compression
-        compressedSize = fs.statSync(outputPath).size;
-      }
-
-      // Calculate compression ratio
-      const savedBytes = originalSize - compressedSize;
-      const compressionRatio =
-        ((savedBytes / originalSize) * 100).toFixed(1) + "%";
-
-      console.log(`Compression results for ${fileName}:`);
-      console.log(`  Original size: ${originalSize} bytes`);
-      console.log(`  Compressed size: ${compressedSize} bytes`);
-      console.log(`  Saved: ${savedBytes} bytes (${compressionRatio})`);
-
-      // Add result
-      results.push({
-        originalName: fileName,
-        compressedPath: outputPath,
-        originalSize,
-        compressedSize,
-        compressionRatio,
-      });
-    }
-
-    return results;
-  } catch (error) {
-    console.error("Error during compression:", error);
-    throw error;
+    // Promisify zlib methods
+    const gzip = promisify(zlib.gzip);
+    
+    // Read the text file
+    const textData = fs.readFileSync(inputPath);
+    
+    // Compress with highest compression level (9)
+    const compressedData = await gzip(textData, { level: 9 });
+    
+    // Write compressed data to output file
+    fs.writeFileSync(outputPath, compressedData);
+    
+    // Return the size of the compressed file
+    return fs.statSync(outputPath).size;
+  } catch (err) {
+    console.error("Error compressing text file:", err);
+    throw err;
   }
-});
+}
 
 // Handle showing a file in folder
 ipcMain.on("show-item-in-folder", (event, filePath) => {
@@ -401,6 +267,11 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
           // For PDFs, use our PDF compression helper
           outputPath = path.join(outputDir, `${baseName}-compressed.pdf`);
           compressedSize = await compressPdf(tempFilePath, outputPath);
+        } else if (fileType === "text") {
+          // For text files, use our specialized text compression
+          outputPath = path.join(outputDir, `${baseName}-compressed.gz`);
+          compressedSize = await compressTextFile(tempFilePath, outputPath);
+          console.log(`Text file compressed with gzip: ${fileName}`);
         } else {
           // For other file types, use standard zip compression
           outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
@@ -511,6 +382,10 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
 
 // App lifecycle events
 app.whenReady().then(() => {
+  // Register electron: protocol handler before creating the window
+  registerElectronProtocol();
+  
+  // Create the main application window
   createWindow();
 
   // Setup auto-updater listeners

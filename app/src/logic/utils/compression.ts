@@ -475,7 +475,7 @@ export function updateDownloadSection(
     downloadButton.href = `file://${file.compressedPath}`;
     downloadButton.className =
       "bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm ml-4 transition-colors duration-150";
-    downloadButton.textContent = "Download";
+    downloadButton.textContent = "View";
     downloadButton.setAttribute("download", ""); // Ensure browser treats as download
 
     // Download button click handler (for Electron)
