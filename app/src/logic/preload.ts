@@ -1,5 +1,5 @@
 // Preload script
-const { contextBridge, ipcRenderer } = require("electron");
+import { contextBridge, ipcRenderer } from "electron";
 
 // Expose protected methods to renderer process through contextBridge
 contextBridge.exposeInMainWorld("electronAPI", {
