@@ -12,11 +12,21 @@
   "build": {
     "appId": "com.slavdev.filecompresSU",
     "productName": "FileCompresSU",
-    "files": [
-      "**/**"
-    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.utilities",
+      "icon": "app/build/icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "app/build/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "app/build/icon.png"
+    },
     "directories": {
-      "buildResources": "build"
+      "output": "dist"
     },
     "publish": [
       {

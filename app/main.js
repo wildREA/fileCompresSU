@@ -35,7 +35,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
-      preload: path.join(__dirname, "dist/logic/preload.js"),
+      preload: path.join(__dirname, "dist", "logic", "preload.js"),
       webSecurity: false, // Allow access to local files (for development only)
     },
   });
