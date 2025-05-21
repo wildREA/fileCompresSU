@@ -12,3 +12,4 @@ LICENSE
 README.md
 app/release-builds/
 dist/node_modules/
+.github/
