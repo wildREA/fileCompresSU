@@ -174,19 +174,19 @@ async function compressTextFile(inputPath, outputPath) {
     return new Promise((resolve, reject) => {
       // Create a read stream from the input file
       const output = fs.createWriteStream(outputPath);
-      const archiver = Archiver("zip");
+      const archive = archiver("zip");
 
       // Handle errors
       output.on("close", () => {
         // Return the actual file size on disk for accurate compression ratio calculation
         resolve(fs.statSync(outputPath).size);
       });
-      archiver.on("error", reject);
+      archive.on("error", reject);
 
       // Pipe the archiver to the output file
-      archiver.pipe(output);
-      archiver.file(inputPath, { name: path.basename(inputPath) });
-      archiver.finalize();
+      archive.pipe(output);
+      archive.file(inputPath, { name: path.basename(inputPath) });
+      archive.finalize();
     });
   } catch (err) {
     console.error("Error compressing text file:", err);
