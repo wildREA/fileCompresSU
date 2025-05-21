@@ -170,20 +170,24 @@ async function compressPdf(inputPath, outputPath) {
 // Helper function to compress text files using gzip
 async function compressTextFile(inputPath, outputPath) {
   try {
-    // Promisify zlib methods
-    const gzip = promisify(zlib.gzip);
-    
-    // Read the text file
-    const textData = fs.readFileSync(inputPath);
-    
-    // Compress with highest compression level (9)
-    const compressedData = await gzip(textData, { level: 9 });
-    
-    // Write compressed data to output file
-    fs.writeFileSync(outputPath, compressedData);
-    
-    // Return the size of the compressed file
-    return fs.statSync(outputPath).size;
+    // Return promise to compress the file
+    return new Promise((resolve, reject) => {
+      // Create a read stream from the input file
+      const output = fs.createWriteStream(outputPath);
+      const archiver = Archiver("zip");
+
+      // Handle errors
+      output.on("close", () => {
+        // Return the actual file size on disk for accurate compression ratio calculation
+        resolve(fs.statSync(outputPath).size);
+      });
+      archiver.on("error", reject);
+
+      // Pipe the archiver to the output file
+      archiver.pipe(output);
+      archiver.file(inputPath, { name: path.basename(inputPath) });
+      archiver.finalize();
+    });
   } catch (err) {
     console.error("Error compressing text file:", err);
     throw err;
@@ -268,10 +272,9 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
           outputPath = path.join(outputDir, `${baseName}-compressed.pdf`);
           compressedSize = await compressPdf(tempFilePath, outputPath);
         } else if (fileType === "text") {
-          // For text files, use our specialized text compression (.zip for Windows compatibility)
-          outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
+          // For text files, use zip compression compatibility for most archive managers
+          outputPath = path.join(outputDir, `${baseName}-compressed.gz`);
           compressedSize = await compressTextFile(tempFilePath, outputPath);
-          console.log(`Text file compressed with zip: ${fileName}`);
         } else {
           // For other file types, use standard zip compression
           outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
@@ -384,7 +387,7 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
 app.whenReady().then(() => {
   // Register electron: protocol handler before creating the window
   registerElectronProtocol();
-  
+
   // Create the main application window
   createWindow();
 
