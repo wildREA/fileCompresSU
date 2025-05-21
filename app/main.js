@@ -273,7 +273,7 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
           compressedSize = await compressPdf(tempFilePath, outputPath);
         } else if (fileType === "text") {
           // For text files, use zip compression compatibility for most archive managers
-          outputPath = path.join(outputDir, `${baseName}-compressed.gz`);
+          outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
           compressedSize = await compressTextFile(tempFilePath, outputPath);
         } else {
           // For other file types, use standard zip compression
