@@ -1,0 +1,21 @@
+directories:
+  output: release-builds
+  buildResources: build
+appId: com.slavdev.filecompresSU
+productName: FileCompresSU
+mac:
+  target: dmg
+  category: public.app-category.utilities
+  icon: app/build/icon.icns
+win:
+  target: nsis
+  icon: app/build/icon.ico
+linux:
+  target: AppImage
+  icon: app/build/icon.png
+publish:
+  - provider: github
+    owner: SlavDev
+    repo: filecompressu
+files: []
+electronVersion: 36.1.0

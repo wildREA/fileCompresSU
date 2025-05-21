@@ -5,10 +5,22 @@
   "type": "module",
   "scripts": {
     "start": "nodemon electron . --disable-gpu",
+    "start:prod": "electron ../dist",
     "pack": "electron-builder --dir",
-    "dist": "npm run build:css:prod && electron-builder",
-    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --watch",
-    "build:css:prod": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --minify"
+    "dist": "npm run build && electron-builder --publish never",
+    "make-dist": "npm run build && npm run dist",
+    "build": "npm run clean && npm run build:ts && npm run build:css:prod && npm run copy:assets && npm run copy:files && npm run copy:utils && npm run copy:configs && npm run copy:icons && npm run copy:package",
+    "build:run": "npm run build && npm run start:prod",
+    "build:ts": "tsc src/logic/preload.ts --outDir ../dist/logic && tsc src/logic/renderer.ts --outDir ../dist/logic && tsc src/logic/utils/compression.ts --outDir ../dist/logic/utils",
+    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ../dist/styles.css --watch",
+    "build:css:prod": "tailwindcss -i ./src/styles/tailwind.css -o ../dist/styles.css --minify",
+    "copy:assets": "mkdir -p ../dist/images && cp -r src/images/* ../dist/images/",
+    "copy:files": "cp index.html ../dist/ && cp main.js ../dist/",
+    "copy:utils": "mkdir -p ../dist/logic/utils && cp -r src/logic/utils/*.js ../dist/logic/utils/",
+    "copy:configs": "cp tailwind.config.js postcss.config.js tsconfig.json ../dist/ || true",
+    "copy:icons": "mkdir -p ../dist/build && cp -r build/* ../dist/build/",
+    "copy:package": "cp package.json ../dist/ && cd ../dist && npm install --production",
+    "clean": "rimraf ../dist"
   },
   "build": {
     "appId": "com.slavdev.filecompresSU",
@@ -27,7 +39,8 @@
       "icon": "app/build/icon.png"
     },
     "directories": {
-      "output": "dist"
+      "output": "release-builds",
+      "buildResources": "build"
     },
     "publish": [
       {
