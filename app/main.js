@@ -167,27 +167,55 @@ async function compressPdf(inputPath, outputPath) {
   }
 }
 
-// Helper function to compress text files using gzip
+// Helper function to compress text files using direct minification
 async function compressTextFile(inputPath, outputPath) {
   try {
-    // Return promise to compress the file
-    return new Promise((resolve, reject) => {
-      // Create a read stream from the input file
-      const output = fs.createWriteStream(outputPath);
-      const archive = archiver("zip");
-
-      // Handle errors
-      output.on("close", () => {
-        // Return the actual file size on disk for accurate compression ratio calculation
-        resolve(fs.statSync(outputPath).size);
-      });
-      archive.on("error", reject);
-
-      // Pipe the archiver to the output file
-      archive.pipe(output);
-      archive.file(inputPath, { name: path.basename(inputPath) });
-      archive.finalize();
-    });
+    // Read the text file
+    const text = fs.readFileSync(inputPath, 'utf8');
+    
+    // Basic minification for text files
+    let minifiedText = text;
+    
+    // Remove extra whitespace, comments, etc. based on file type
+    const extension = path.extname(inputPath).toLowerCase();
+    if (['.js', '.json'].includes(extension)) {
+      // For JavaScript and JSON
+      minifiedText = minifiedText
+        .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Remove comments
+        .replace(/\s+/g, ' ')                    // Collapse whitespace
+        .replace(/^\s+|\s+$/gm, '');             // Trim lines
+    } else if (['.css'].includes(extension)) {
+      // For CSS
+      minifiedText = minifiedText
+        .replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '') // Remove comments
+        .replace(/\s+/g, ' ')                    // Collapse whitespace
+        .replace(/:\s+/g, ':')                   // Remove space after colons
+        .replace(/;\s+/g, ';')                   // Remove space after semicolons
+        .replace(/{\s+/g, '{')                   // Remove space after opening braces
+        .replace(/}\s+/g, '}')                   // Remove space after closing braces
+        .replace(/,\s+/g, ',')                   // Remove space after commas
+        .replace(/^\s+|\s+$/gm, '');             // Trim lines
+    } else if (['.html'].includes(extension)) {
+      // For HTML
+      minifiedText = minifiedText
+        .replace(/<!--[\s\S]*?-->/g, '')        // Remove HTML comments
+        .replace(/>\s+</g, '><')                // Remove whitespace between tags
+        .replace(/\s+/g, ' ')                   // Collapse whitespace
+        .replace(/^\s+|\s+$/gm, '');            // Trim lines
+    } else if (['.txt', '.md'].includes(extension)) {
+      // For plain text and markdown, just remove extra whitespace
+      minifiedText = minifiedText
+        .replace(/\n\s*\n\s*\n/g, '\n\n')       // Collapse multiple blank lines
+        .replace(/\t/g, ' ')                    // Replace tabs with spaces
+        .replace(/[ ]{2,}/g, ' ')               // Collapse multiple spaces
+        .replace(/^\s+|\s+$/gm, '');            // Trim each line
+    }
+    
+    // Write the minified text to the output file
+    fs.writeFileSync(outputPath, minifiedText, 'utf8');
+    
+    // Return the size of the compressed file
+    return fs.statSync(outputPath).size;
   } catch (err) {
     console.error("Error compressing text file:", err);
     throw err;
@@ -262,23 +290,26 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
         // Apply different compression strategies based on file type
         if (fileType === "image") {
           // For images, use our image compression helper
-          outputPath = path.join(
-            outputDir,
-            `${baseName}-compressed.${extension}`
-          );
+          outputPath = path.join(outputDir, `${baseName}-compressed.${extension}`);
           compressedSize = await compressImage(tempFilePath, outputPath);
         } else if (fileType === "pdf") {
           // For PDFs, use our PDF compression helper
           outputPath = path.join(outputDir, `${baseName}-compressed.pdf`);
           compressedSize = await compressPdf(tempFilePath, outputPath);
-        } else if (fileType === "text") {
-          // For text files, use zip compression compatibility for most archive managers
-          outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
+        } else if (fileType === "text" && fs.statSync(tempFilePath).size > 1024) {
+          // Compression for text files larger than 1 KB
+          const extension = path.extname(fileName);
+          outputPath = path.join(outputDir, `${baseName}-compressed${extension}`);
           compressedSize = await compressTextFile(tempFilePath, outputPath);
+        } else if (fileType === "text" && fs.statSync(tempFilePath).size <= 1024) {
+          // For text files smaller than 1 KB, simply copy them
+          const extension = path.extname(fileName);
+          outputPath = path.join(outputDir, `${baseName}-copy${extension}`);
+          fs.copyFileSync(tempFilePath, outputPath);
+          compressedSize = fs.statSync(outputPath).size;
         } else {
           // For other file types, use standard zip compression
           outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
-
           const output = fs.createWriteStream(outputPath);
           const archive = archiver("zip", {
             zlib: { level: 9 }, // 0-9, 9 being highest compression
@@ -302,7 +333,7 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
           await new Promise((resolve, reject) => {
             output.on("close", () => {
               console.log(
-                `${fileName} has been compressed - ${archive.pointer()} total bytes`
+                `${fileName} has been compressed - ${archive.pointer()} total bytes` // REMINDER: Change archive.pointer() to fs.statSync(outputPath).size
               );
               resolve();
             });
@@ -320,37 +351,48 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
       } catch (compressionError) {
         console.error(`Error compressing ${fileName}:`, compressionError);
 
-        // If compression fails, fall back to zip compression
-        console.log(`Falling back to zip compression for ${fileName}`);
-        outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
+        // If compression fails, handle fallback based on file type
+        console.log(`Fallback compression for ${fileName}`);
+        
+        // Check if it's a text file for fallback
+        if (fileType === "text") {
+          // For text files, simply copy them as a fallback
+          const extension = path.extname(fileName);
+          outputPath = path.join(outputDir, `${baseName}-fallback${extension}`);
+          fs.copyFileSync(tempFilePath, outputPath);
+          compressedSize = fs.statSync(outputPath).size;
+        } else {
+          // For non-text files, use zip compression as fallback
+          outputPath = path.join(outputDir, `${baseName}-compressed.zip`);
+          
+          const output = fs.createWriteStream(outputPath);
+          const archive = archiver("zip", {
+            zlib: { level: 9 }, // 0-9, 9 being highest compression
+          });
 
-        const output = fs.createWriteStream(outputPath);
-        const archive = archiver("zip", {
-          zlib: { level: 9 }, // 0-9, 9 being highest compression
-        });
+          archive.on("warning", (err) => {
+            if (err.code !== "ENOENT") {
+              console.warn("Warning during fallback compression:", err);
+            }
+          });
 
-        archive.on("warning", (err) => {
-          if (err.code !== "ENOENT") {
-            console.warn("Warning during fallback compression:", err);
-          }
-        });
+          archive.on("error", (err) => {
+            console.error("Error during fallback compression:", err);
+            throw err;
+          });
 
-        archive.on("error", (err) => {
-          console.error("Error during fallback compression:", err);
-          throw err;
-        });
+          archive.pipe(output);
 
-        archive.pipe(output);
+          // Wait for the archive to finalize
+          await new Promise((resolve, reject) => {
+            output.on("close", resolve);
+            output.on("error", reject);
+            archive.file(tempFilePath, { name: fileName });
+            archive.finalize();
+          });
 
-        // Wait for the archive to finalize
-        await new Promise((resolve, reject) => {
-          output.on("close", resolve);
-          output.on("error", reject);
-          archive.file(tempFilePath, { name: fileName });
-          archive.finalize();
-        });
-
-        compressedSize = fs.statSync(outputPath).size;
+          compressedSize = fs.statSync(outputPath).size;
+        }
       }
 
       // Clean up temp file
