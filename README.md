@@ -121,11 +121,7 @@ fileCompresSU is a modern, minimalistic designed application used for file compr
 
 ### Main Page
 
-<img src="https://github.com/Mech654/Resources/blob/main/eam/main.png?raw=true" alt="Main Page Screenshot" style="max-width: 100%; height: auto;">
-
-### Chat Page
-
-<img src="https://github.com/Mech654/Resources/blob/main/eam/chat.png?raw=true" alt="Chat Page Screenshot" style="max-width: 100%; height: auto;">
+<img src="https://github.com/wildREA/fileCompresSU/tree/dev/app/src/images/fileCompressor.png?raw=true" alt="Main Page Screenshot" style="max-width: 100%; height: auto;">
 
 ---
 
