@@ -136,10 +136,11 @@ fileCompresSU handles seamless compression of images, PDFs, and text-based files
 - **Drag-and-Drop upload:** Simply drag your files or click the dropzone to add any supported format—no format selection needed.
 - **One-Click Compression:** Click **Compress**, and fileCompresSU automatically optimizes and shrinks your file while preserving quality.
 - **Instant Download:** Download your compressed file immediately—no ads, no wait times, and no hidden cooldowns.
+- **View Compressed Files:** Upon uploading your files and compressing them, there will be a **View** button to open the directory where the compressed files will be shown.
 
 This design ensures a user-friendly experience while maintaining a clean look and feel.
 
-**From developer:** It's relevant to mention that the releases are not built with any Organization- or Extended Validation (OV/EV). You can choose to either <a href="#installation">install</a> the application or <a href="#contributing">run it raw</a>.
+**From developer:** It's relevant to mention that the releases are not built with any Organization- or Extended Validation (OV/EV). You can choose to either <a href="#installation">install</a> the application or <a href="#contributing">run it raw</a> by using `npm start` in the `app/` directory.
 
 ---
 
@@ -149,12 +150,12 @@ Interested in exploring the application firsthand? Follow these simple steps to 
 
 ### Installation
 
-1. **Download:** Head over to the [Releases](https://github.com/wildREA/computerComponentsTracker/tags) page and download the latest version.
+1. **Download:** Head over to the [Releases](https://github.com/wildREA/fileCompresSU/tags) page and download the latest version.
 2. **Extract:** Unzip the downloaded folder to your preferred location.
-3. **Run Setup:** Launch `setup.exe` and follow the installation prompts.
+3. **Run Setup:** Launch `setup.exe` or `AppImage` and follow the installation prompts.
 4. **Installation:** Click `Install` when prompted.
 
-Once installed, the application will automatically launch, providing you with an engaging interface that showcases a variety of cars along with their hardware statistics. If you encounter an "Unknown Publisher" warning, rest assured it is due to the software not being signed—a common situation with unsigned applications.
+Once installed, the application will automatically launch, providing you with a simple interface that displays an intuitive file dropzone with follow-up UI elements upon uploading and compressing a file or files. If you encounter an "Unknown Publisher" warning, rest assured it is due to the software not being signed—a common situation with unsigned applications.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -170,6 +171,8 @@ We have an exciting roadmap planned for future updates:
   - [x] Image
   - [x] Document
   - [x] Text
+- [x] Integrate preloader
+- [x] Integrate auto-updater
 
 Your feedback and suggestions are always welcome as we continue to evolve this project.
 
