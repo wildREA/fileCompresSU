@@ -1,7 +1,7 @@
 .vscode/
 dist/
-dist/node_modules
-app/node_modules
+dist/node_modules/
+app/node_modules/
 app/release-builds/
 *.asar
 *.env
