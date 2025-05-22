@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'app/**'  # Only run when files in the app folder are modified
   pull_request:
     branches:
       - master
