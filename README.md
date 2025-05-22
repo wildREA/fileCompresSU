@@ -140,6 +140,21 @@ This design ensures a user-friendly experience while maintaining a clean look an
 
 ---
 
+## Usage
+
+fileCompresSU handles seamless compression of images, PDFs, and text-based files with these core features:
+
+- **Drag-and-Drop upload:** Simply drag your files or click the dropzone to add any supported format—no format selection needed.
+- **One-Click Compression:** Click **Compress**, and fileCompresSU automatically optimizes and shrinks your file while preserving quality.
+- **Instant Download:** Download your compressed file immediately—no ads, no wait times, and no hidden cooldowns.
+- **View Compressed Files:** Upon uploading your files and compressing them, there will be a **View** button to open the directory where the compressed files will be shown.
+
+This design ensures a user-friendly experience while maintaining a clean look and feel.
+
+**From developer:** It's relevant to mention that the releases are not built with any Organization- or Extended Validation (OV/EV). You can choose to either <a href="#installation">install</a> the application or <a href="#contributing">run it raw</a> by using `npm start` in the `app/` directory.
+
+---
+
 ## Getting Started
 
 Interested in exploring the application firsthand? Follow these simple steps to get started:

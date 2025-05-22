@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon electron . --disable-gpu",
+<<<<<<< HEAD
     "start:prod": "electron ../dist",
     "pack": "electron-builder --dir",
     "dist": "npm run build && electron-builder --publish never",
@@ -21,6 +22,12 @@
     "copy:icons": "mkdir -p ../dist/build && cp -r build/* ../dist/build/",
     "copy:package": "cp package.json ../dist/ && cd ../dist && npm install --production",
     "clean": "rimraf ../dist"
+=======
+    "pack": "electron-builder --dir",
+    "dist": "npm run build:css:prod && electron-builder",
+    "build:css": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --watch",
+    "build:css:prod": "tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles.css --minify"
+>>>>>>> refs/remotes/origin/master
   },
   "build": {
     "appId": "com.slavdev.filecompresSU",
@@ -39,8 +46,12 @@
       "icon": "app/build/icon.png"
     },
     "directories": {
+<<<<<<< HEAD
       "output": "release-builds",
       "buildResources": "build"
+=======
+      "output": "dist"
+>>>>>>> refs/remotes/origin/master
     },
     "publish": [
       {
