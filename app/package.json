@@ -68,6 +68,7 @@
     "electron-builder": "^26.0.12",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.3",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3"
   },
