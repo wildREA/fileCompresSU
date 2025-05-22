@@ -1,6 +1,5 @@
 .vscode/
 dist/
-<<<<<<< HEAD
 dist/node_modules/
 app/node_modules/
 # Build artifacts
@@ -11,15 +10,3 @@ app/release-builds/
 *.snap
 *.tsbuildinfo
 LICENSE
-=======
-*.asar
-build/
-node_modules/
-*.env
-*.log
-*.snap
-*.yml
-*.tsbuildinfo
-LICENSE
-README.md
->>>>>>> refs/remotes/origin/master
