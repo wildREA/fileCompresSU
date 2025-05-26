@@ -1,6 +1,11 @@
 {
   "name": "filecompressu",
   "version": "1.0.0",
+  "author": {
+    "name": "wildREA",
+    "email": "slavdevinc@gmail.com"
+  },
+  "homepage": "https://github.com/wildREA/fileCompresSU",
   "main": "main.js",
   "type": "module",
   "scripts": {
@@ -20,26 +25,34 @@
     "copy:configs": "cp tailwind.config.js postcss.config.js tsconfig.json ../dist/ || true",
     "copy:icons": "mkdir -p ../dist/build && cp -r build/* ../dist/build/",
     "copy:package": "cp package.json ../dist/ && cd ../dist && npm install --production",
-    "clean": "rimraf ../dist"
+    "clean": "rimraf ../dist",
+    "build:linux": "npm run build && cd ../dist && electron-builder --linux --x64 --publish never",
+    "build:linux-arm64": "npm run build && cd ../dist && electron-builder --linux --arm64 --publish never",
+    "build:mac": "npm run build && cd ../dist && electron-builder --mac --x64 --publish never",
+    "build:win": "npm run build && cd ../dist && electron-builder --win --x64 --publish never",
+    "build:all": "npm run build && cd ../dist && electron-builder --linux --mac --win --x64 --arm64 --publish never"
   },
   "build": {
     "appId": "com.slavdev.filecompresSU",
     "productName": "FileCompresSU",
-    "mac": {
-      "target": "dmg",
-      "category": "public.app-category.utilities",
-      "icon": "app/build/icon.icns"
-    },
     "win": {
-      "target": "nsis",
-      "icon": "app/build/icon.ico"
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-${version}-win.${ext}"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "app/build/icon.png"
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "${productName}-${version}-linux-${arch}.${ext}"
     },
     "directories": {
-      "output": "release-builds",
+      "output": "../release-builds",
       "buildResources": "build"
     },
     "publish": [
@@ -58,30 +71,29 @@
     "pdf",
     "utility"
   ],
-  "author": "SlavDev",
   "license": "ISC",
   "description": "A modern file compression application for images, PDFs, and text files",
   "devDependencies": {
-    "@tailwindcss/cli": "^4.1.5",
-    "autoprefixer": "^10.4.21",
-    "electron": "^36.1.0",
-    "electron-builder": "^26.0.12",
-    "nodemon": "^3.1.10",
-    "postcss": "^8.5.3",
-    "rimraf": "^6.0.1",
-    "tailwindcss": "^4.1.7",
-    "typescript": "^5.8.3"
+    "@tailwindcss/cli": "4.1.5",
+    "autoprefixer": "10.4.21",
+    "electron": "^36.3.1",
+    "electron-builder": "26.0.15",
+    "nodemon": "3.1.10",
+    "postcss": "8.5.3",
+    "rimraf": "6.0.1",
+    "tailwindcss": "4.1.7",
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "archiver": "^7.0.1",
-    "electron-updater": "^6.6.2",
-    "imagemin": "^9.0.1",
-    "imagemin-gifsicle": "^7.0.0",
-    "imagemin-mozjpeg": "^10.0.0",
-    "imagemin-pngquant": "^10.0.0",
-    "imagemin-svgo": "^11.0.1",
-    "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "^5.2.133",
-    "sharp": "^0.34.1"
+    "archiver": "7.0.1",
+    "electron-updater": "6.6.2",
+    "imagemin": "9.0.1",
+    "imagemin-gifsicle": "7.0.0",
+    "imagemin-mozjpeg": "10.0.0",
+    "imagemin-pngquant": "10.0.0",
+    "imagemin-svgo": "11.0.1",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "5.2.133",
+    "sharp": "0.34.2"
   }
 }

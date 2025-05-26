@@ -37,9 +37,9 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: false, // Disable Node.js integration for security
-      contextIsolation: true, // Keep context isolation enabled
-      preload: path.join(__dirname, "dist/logic/preload.js"),
+      nodeIntegration: true, // Emanle nodeIntegration for direct access to Node.js APIs (exports work with nodeIntegration)
+      contextIsolation: false, // Keep context isolation disabled for nodeIntegration
+      preload: path.join(__dirname, "../dist/src/logic/preload.js"),
       webSecurity: true, // Enable web security in production
     },
   });
