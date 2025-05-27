@@ -13,13 +13,11 @@ import imageminGifsicle from "imagemin-gifsicle";
 import imageminSvgo from "imagemin-svgo";
 import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
-import zlib from "zlib";
-import { promisify } from "util";
 
 // Import notifications module
-import * as notifier from "./src/logic/utils/au-notifications.js";
+import * as notifier from "../dist/src/logic/utils/au-notifications.js";
 // Import protocol handler
-import { registerElectronProtocol } from "./src/logic/utils/protocol-handler.js";
+import { registerElectronProtocol } from "../dist/src/logic/utils/protocol-handler.js";
 
 // Destructure the functions
 const { setupAutoUpdaterListeners } = notifier;
@@ -37,8 +35,8 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true, // Emanle nodeIntegration for direct access to Node.js APIs (exports work with nodeIntegration)
-      contextIsolation: false, // Keep context isolation disabled for nodeIntegration
+      nodeIntegration: false, // Disable Node.js integration for security
+      contextIsolation: true, // Keep context isolation enabled
       preload: path.join(__dirname, "../dist/src/logic/preload.js"),
       webSecurity: true, // Enable web security in production
     },
