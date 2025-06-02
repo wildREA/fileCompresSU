@@ -14,10 +14,12 @@ import imageminSvgo from "imagemin-svgo";
 import sharp from "sharp";
 import { PDFDocument } from "pdf-lib";
 
-// Import notifications module
-import * as notifier from "../dist/src/logic/utils/au-notifications.js";
-// Import protocol handler
+
+// Import protocol handlerimport * as notifier from "./src/logic/utils/au-notifications.js";
 import { registerElectronProtocol } from "../dist/src/logic/utils/protocol-handler.js";
+
+// Import notification module
+import * as notifier from "../dist/src/logic/utils/au-notifications.js";
 
 // Destructure the functions
 const { setupAutoUpdaterListeners } = notifier;
@@ -109,7 +111,10 @@ async function compressImage(inputPath, outputPath, options = {}) {
         plugins.push(imageminMozjpeg({ quality: 70 }));
       } else if (extension === ".png") {
         plugins.push(imageminPngquant({ quality: [0.6, 0.8] }));
+      } else if (extension === ".webp") {
+        plugins.push(imageminWebp({ quality: 70 }));
       }
+
 
       const files = await imagemin([inputPath], {
         destination: path.dirname(outputPath),
@@ -340,7 +345,7 @@ ipcMain.handle("compress-file-objects", async (event, fileObjects) => {
             // Add the file to the archive with its original name
             archive.file(tempFilePath, { name: fileName });
 
-            // Finalize the archive (this is important!)
+            // Finalize the archived<
             archive.finalize();
           });
 

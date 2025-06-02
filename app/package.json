@@ -38,6 +38,9 @@
   "build": {
     "appId": "com.slavdev.filecompresSU",
     "productName": "FileCompresSU",
+    "files": [
+      "dist/**/*"
+    ],
     "win": {
       "target": [
         "nsis",
