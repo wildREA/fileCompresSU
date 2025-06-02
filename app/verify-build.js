@@ -27,8 +27,7 @@ const requiredDirs = [
   'src/logic',
   'src/logic/utils',
   'src/images',
-  'build',
-  'node_modules'
+  'build'
 ];
 
 console.log('Verifying dist directory structure...');
