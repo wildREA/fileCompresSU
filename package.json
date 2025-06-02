@@ -1,0 +1,94 @@
+{
+  "name": "filecompressu",
+  "version": "1.0.0",
+  "description": "A modern file compression application for images, PDFs, and text files",
+  "main": "dist/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "start:dev": "cd app && nodemon electron . --disable-gpu",
+    "start:prod": "electron dist",
+    "copy:ts-files": "echo 'TypeScript compilation handled by tsc'",
+    "build": "npm run clean && npm run build:ts && npm run copy:ts-files && echo '\nContents of dist after tsc:' && ls -R dist && npm run build:css && npm run copy:assets && npm run copy:files && npm run copy:utils && npm run copy:configs && npm run copy:icons && npm run copy:package && npm run verify-build",
+    "verify-build": "cd app && node verify-build.js",
+    "build:run": "npm run build && npm run start:prod",
+    "build:ts": "mkdir -p dist/src/logic/utils && cd app && npx tsc --project tsconfig.json",
+    "build:css": "cd app && tailwindcss -i ./src/styles/tailwind.css -o ../dist/src/styles.css",
+    "build:css:dev": "cd app && tailwindcss -i ./src/styles/tailwind.css -o ../dist/src/styles.css --watch",
+    "build:css:prod": "cd app && tailwindcss -i ./src/styles/tailwind.css -o ../dist/src/styles.css --minify",
+    "copy:assets": "cd app && cpx \"src/images/**/*\" ../dist/src/images",
+    "copy:files": "cd app && cpx \"{index.html,main.js}\" ../dist/",
+    "copy:utils": "cd app && cpx \"src/logic/utils/*.js\" ../dist/src/logic/utils/",
+    "copy:configs": "cd app && cpx \"{tailwind.config.js,postcss.config.js,tsconfig.json}\" ../dist/ || true",
+    "copy:icons": "cd app && cpx \"build/**/*\" ../dist/build/",
+    "copy:package": "cp app/package.json dist/",
+    "clean": "rimraf dist",
+    "dist": "npm run build && electron-builder",
+    "dist:linux": "npm run build && electron-builder --linux",
+    "dist:win": "npm run build && electron-builder --win"
+  },
+  "author": {
+    "name": "wildREA",
+    "email": "slavdevinc@gmail.com"
+  },
+  "homepage": "https://github.com/wildREA/fileCompresSU",
+  "keywords": [
+    "file",
+    "compression",
+    "electron",
+    "image",
+    "pdf",
+    "utility"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "4.1.5",
+    "autoprefixer": "10.4.21",
+    "cpx": "^1.5.0",
+    "electron": "36.3.1",
+    "electron-builder": "26.0.15",
+    "nodemon": "3.1.10",
+    "postcss": "8.5.3",
+    "rimraf": "6.0.1",
+    "tailwindcss": "4.1.7",
+    "typescript": "5.8.3"
+  },
+  "dependencies": {
+    "archiver": "7.0.1",
+    "electron-updater": "6.6.2",
+    "imagemin": "9.0.1",
+    "imagemin-gifsicle": "7.0.0",
+    "imagemin-mozjpeg": "10.0.0",
+    "imagemin-pngquant": "10.0.0",
+    "imagemin-svgo": "11.0.1",
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "5.2.133",
+    "sharp": "0.34.2"
+  },
+  "build": {
+    "appId": "com.slavdev.filecompresSU",
+    "productName": "FileCompresSU",
+    "win": {
+      "target": "nsis",
+      "icon": "dist/build/icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "dist/build/icon.png"
+    },
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "nodeGypRebuild": true,
+    "buildDependenciesFromSource": false,
+    "npmRebuild": true,
+    "afterSign": null,
+    "afterPack": null,
+    "beforeBuild": null,
+    "publish": null
+  }
+}
